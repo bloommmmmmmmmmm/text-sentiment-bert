@@ -1,0 +1,38 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+pip-log.txt
+pip-delete-this-directory.txt
+.hypothesis/
+
+# Data
+*.csv
+*.parquet
+*.h5
+*.pkl
+*.pt
+
+# Logs
+*.log
+
+# Jupyter
+*.ipynb_checkpoints
+
+#IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
