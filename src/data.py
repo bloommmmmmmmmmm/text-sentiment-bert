@@ -10,4 +10,4 @@ def load_tokenized_data(dataset_name, model_name):
         return tokenizer(batch["text"], truncation=True)
 
     tokenized_dataset = dataset.map(tokenize, batched=True)
-    return tokenized_dataset
+    return tokenized_dataset, tokenizer
