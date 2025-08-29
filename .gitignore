@@ -15,12 +15,18 @@ pip-delete-this-directory.txt
 .hypothesis/
 sandbox.py
 
+# Models
+experiments/
+models/
+*.bin
+*.pt
+*.pth
+
 # Data
 *.csv
 *.parquet
 *.h5
 *.pkl
-*.pt
 
 # Logs
 *.log
