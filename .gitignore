@@ -24,6 +24,7 @@ sandbox.py
 
 # Logs
 *.log
+src/logs
 
 # Jupyter
 *.ipynb_checkpoints
