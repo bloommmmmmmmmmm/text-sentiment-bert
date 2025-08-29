@@ -3,7 +3,6 @@ import torch
 from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer, DataCollatorWithPadding
 from src.data import load_tokenized_data
 from src.evaluate import compute_metrics
-import argparse
 
 
 def read_config(config_file):
@@ -39,27 +38,3 @@ def train_model(model, config, tokenizer, data_collator):
     trainer.train()
     trainer.save_model(output_dir=config["output_dir"])
     return trainer
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config_file", type="str", default="training.yaml")
-    args = parser.parse_args()
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    config = read_config(args.config_file)
-
-    tokenized_data, tokenizer = load_tokenized_data(config["dataset"], config["model_name"])
-    data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="pt")
-    model = AutoModelForSequenceClassification.from_pretrained(
-        config["model_name"], 
-        num_labels=config["num_labels"]
-    ).to(device)
-    train_model(model=model, 
-                config=config, 
-                tokenizer=tokenizer
-                data_collator=data_collator
-    )
-
-
-if __name__ == "__main__":
-    main()
