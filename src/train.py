@@ -47,7 +47,7 @@ def train_model(model, data, config, tokenizer, data_collator):
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("--config_file", type="str", default="training.yaml")
+    parser.add_argument("--config_file", type="str", default="configs/training.yaml")
     args = parser.parse_args()
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
