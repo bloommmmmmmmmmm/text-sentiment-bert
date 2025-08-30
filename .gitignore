@@ -44,3 +44,6 @@ src/logs
 # OS
 .DS_Store
 Thumbs.db
+
+# Misc
+TODO.txt
