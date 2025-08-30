@@ -11,10 +11,12 @@ from src.data import load_tokenized_data
 from src.evaluate import compute_metrics
 
 
-def read_config(config_file):
-    with open(config_file, "r") as file:
-        config = yaml.safe_load(file)
-    return config
+def create_model(model_name: str, num_labels: int, device):
+    model = AutoModelForSequenceClassification.from_pretrained(
+        model_name, 
+        num_labels=num_labels
+    ).to(device)
+    return model
 
 def train_model(model, data, config, tokenizer, data_collator):
     training_args = TrainingArguments(
@@ -45,27 +47,21 @@ def train_model(model, data, config, tokenizer, data_collator):
     trainer.save_model(output_dir=config["output_dir"])
     return trainer
 
-def main():
-    parser = ArgumentParser()
-    parser.add_argument("--config_file", type="str", default="configs/training.yaml")
-    args = parser.parse_args()
+# def main():
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    config = read_config(args.config_file)
-
-    tokenized_data, tokenizer = load_tokenized_data(config["dataset"], config["model_name"])
-    data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="pt")
-    model = AutoModelForSequenceClassification.from_pretrained(
-        config["model_name"], 
-        num_labels=config["num_labels"]
-    ).to(device)
-    train_model(model=model, 
-                data=tokenized_data,
-                config=config, 
-                tokenizer=tokenizer,
-                data_collator=data_collator
-    )
+#     tokenized_data, tokenizer = load_tokenized_data(config["dataset"], config["model_name"])
+#     data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="pt")
+#     model = AutoModelForSequenceClassification.from_pretrained(
+#         config["model_name"], 
+#         num_labels=config["num_labels"]
+#     ).to(device)
+#     train_model(model=model, 
+#                 data=tokenized_data,
+#                 config=config, 
+#                 tokenizer=tokenizer,
+#                 data_collator=data_collator
+#     )
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
