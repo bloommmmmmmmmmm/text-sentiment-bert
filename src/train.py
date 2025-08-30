@@ -1,22 +1,22 @@
-import yaml
-import torch
-from argparse import ArgumentParser
 from transformers import (
     AutoModelForSequenceClassification, 
     TrainingArguments, 
     Trainer, 
-    DataCollatorWithPadding
+    PreTrainedTokenizerBase
 )
-from src.data import load_tokenized_data
 from src.evaluate import compute_metrics
+from typing import Dict, Any
+from datasets import DatasetDict
 
 
-def read_config(config_file):
-    with open(config_file, "r") as file:
-        config = yaml.safe_load(file)
-    return config
+def create_model(model_name: str, num_labels: int, device):
+    model = AutoModelForSequenceClassification.from_pretrained(
+        model_name, 
+        num_labels=num_labels
+    ).to(device)
+    return model
 
-def train_model(model, data, config, tokenizer, data_collator):
+def create_training_args(config: Dict[str, Any]):
     training_args = TrainingArguments(
         output_dir=config["output_dir"],
         learning_rate=config["learning_rate"],
@@ -27,15 +27,22 @@ def train_model(model, data, config, tokenizer, data_collator):
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
-        logging_dir="./logs",
+        logging_dir=f"{config["output_dir"]}/logs",
         logging_steps=10
     )
-        
+    return training_args
+
+def train_model(model, 
+                tokenized_data: DatasetDict, 
+                config: Dict[str, Any], 
+                tokenizer: PreTrainedTokenizerBase, 
+                data_collator):
+    training_args = create_training_args(config=config)
     trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=data["train"], # type: ignore
-        eval_dataset=data["validation"], # type: ignore
+        train_dataset=tokenized_data["train"], 
+        eval_dataset=tokenized_data["validation"], 
         processing_class=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics # type: ignore
@@ -44,28 +51,3 @@ def train_model(model, data, config, tokenizer, data_collator):
     trainer.train()
     trainer.save_model(output_dir=config["output_dir"])
     return trainer
-
-def main():
-    parser = ArgumentParser()
-    parser.add_argument("--config_file", type="str", default="configs/training.yaml")
-    args = parser.parse_args()
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    config = read_config(args.config_file)
-
-    tokenized_data, tokenizer = load_tokenized_data(config["dataset"], config["model_name"])
-    data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="pt")
-    model = AutoModelForSequenceClassification.from_pretrained(
-        config["model_name"], 
-        num_labels=config["num_labels"]
-    ).to(device)
-    train_model(model=model, 
-                data=tokenized_data,
-                config=config, 
-                tokenizer=tokenizer,
-                data_collator=data_collator
-    )
-
-
-if __name__ == "__main__":
-    main()
