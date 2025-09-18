@@ -6,7 +6,6 @@ from transformers import (
 )
 from src.evaluate import compute_metrics
 from typing import Dict, Any
-from datasets import DatasetDict
 
 
 def create_model(model_name: str, num_labels: int, device):
@@ -33,7 +32,7 @@ def create_training_args(config: Dict[str, Any]):
     return training_args
 
 def train_model(model, 
-                tokenized_data: DatasetDict, 
+                tokenized_data, 
                 config: Dict[str, Any], 
                 tokenizer: PreTrainedTokenizerBase, 
                 data_collator):

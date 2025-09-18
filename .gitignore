@@ -18,6 +18,7 @@ sandbox.py
 # Models
 experiments/
 models/
+mlruns/
 *.bin
 *.pt
 *.pth

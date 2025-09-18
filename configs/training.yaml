@@ -1,8 +1,13 @@
-model_name: distilbert/distilbert-base-uncasee
+model:
+  name: distilbert/distilbert-base-uncase
+  num_labels: 6
+
 dataset: dair-ai/emotion
-num_labels: 6
-batch_size: 16
-epochs: 3
-learning_rate: 2e-5
-weight_decay: 0.01
-output_dir: experiments/emotions-distilbert-lr2e-5
+
+train:
+  epochs: 3
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  batch_size: 16
+
+output_dir: models/emotions-distilbert-v1
